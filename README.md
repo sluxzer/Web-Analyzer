@@ -11,6 +11,8 @@ A free, open-source web analyzer built with Next.js, Lighthouse, and Vercel.
 - **Caching**: Vercel KV for fast results
 - **History**: Track website performance over time
 
+> **Note**: The current version uses a demo analysis for demonstration purposes. For production use, integrate with Google PageSpeed Insights API or deploy Lighthouse as a separate service.
+
 ## Tech Stack
 
 - **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS

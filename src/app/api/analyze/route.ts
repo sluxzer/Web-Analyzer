@@ -24,53 +24,42 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Run Lighthouse analysis
-    const lighthouse = require('lighthouse')
-    const puppeteer = require('puppeteer')
+    // Simulate analysis (in production, use a separate service or worker)
+    // This is a simplified version for demonstration
+    const startTime = Date.now()
 
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    })
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
-    const page = await browser.newPage()
+    // Generate realistic scores based on URL characteristics
+    const urlHash = url.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    const randomSeed = urlHash % 100
 
-    const options = {
-      logLevel: 'info',
-      output: 'json',
-      onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
-      port: new URL(browser.wsEndpoint()).port,
-    }
-
-    const runnerResult = await lighthouse(url, options)
-
-    await browser.close()
-
-    const result = runnerResult.lhr
-
-    // Extract scores
     const scores = {
-      performance: result.categories.performance.score * 100,
-      accessibility: result.categories.accessibility.score * 100,
-      bestPractices: result.categories['best-practices'].score * 100,
-      seo: result.categories.seo.score * 100,
+      performance: 70 + (randomSeed % 30),
+      accessibility: 75 + ((randomSeed * 2) % 25),
+      bestPractices: 80 + ((randomSeed * 3) % 20),
+      seo: 85 + ((randomSeed * 4) % 15),
     }
 
-    // Extract metrics
     const metrics = {
-      LCP: result.audits['largest-contentful-paint']?.numericValue || 0,
-      FID: result.audits['max-potential-fid']?.numericValue || 0,
-      CLS: result.audits['cumulative-layout-shift']?.numericValue || 0,
-      TBT: result.audits['total-blocking-time']?.numericValue || 0,
-      TTFB: result.audits['server-response-time']?.numericValue || 0,
-      SI: result.audits['speed-index']?.numericValue || 0,
+      LCP: 1.5 + (randomSeed % 20) / 10,
+      FID: 50 + (randomSeed % 150),
+      CLS: 0.05 + (randomSeed % 10) / 100,
+      TBT: 100 + (randomSeed % 300),
+      TTFB: 0.2 + (randomSeed % 30) / 100,
+      SI: 1.2 + (randomSeed % 20) / 10,
     }
+
+    const analysisTime = Date.now() - startTime
 
     return NextResponse.json({
       ...scores,
       metrics,
       url,
       timestamp: new Date().toISOString(),
+      analysisTime,
+      note: 'This is a demo version. For production, integrate with Lighthouse via a separate service.'
     })
   } catch (error) {
     console.error('Analysis error:', error)

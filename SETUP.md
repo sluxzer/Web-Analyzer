@@ -93,6 +93,30 @@ vercel --prod
 - ✅ Core Web Vitals (LCP, FID, CLS, TBT)
 - ✅ Real-time Analysis
 - ✅ Responsive Design
+- ✅ Demo Analysis (for demonstration)
+
+### Production Setup
+
+For production use, you have two options:
+
+#### Option 1: Google PageSpeed Insights API
+```javascript
+// Use Google's official API
+const response = await fetch(
+  `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${API_KEY}`
+)
+const data = await response.json()
+```
+
+#### Option 2: Separate Lighthouse Service
+Deploy Lighthouse as a separate Node.js service:
+```bash
+# Create a separate service
+mkdir lighthouse-service
+cd lighthouse-service
+npm init -y
+npm install lighthouse puppeteer express
+```
 
 ### Future Features (Upgrade Path)
 
@@ -103,6 +127,7 @@ vercel --prod
 - 🔄 Competitor Comparison
 - 🔄 Scheduled Monitoring
 - 🔄 API Rate Limiting
+- 🔄 Production Lighthouse Integration
 
 ## 📈 Performance
 
