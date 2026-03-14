@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import ScoreCard from "@/components/ScoreCard"
+import MetricCard from "@/components/MetricCard"
 
 export default function Home() {
   const [url, setUrl] = useState("")
@@ -43,7 +45,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Web Analyzer
           </h1>
@@ -53,27 +55,37 @@ export default function Home() {
         </div>
 
         {/* Analysis Form */}
-        <div className="max-w-2xl mx-auto mb-12">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+        <div className="max-w-2xl mx-auto mb-12 animate-slide-up">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow">
             <div className="flex gap-4">
               <input
                 type="url"
                 placeholder="https://example.com"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors"
                 disabled={loading}
               />
               <button
                 onClick={analyzeWebsite}
                 disabled={loading}
-                className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                {loading ? "Analyzing..." : "Analyze"}
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Analyzing...
+                  </span>
+                ) : (
+                  "Analyze"
+                )}
               </button>
             </div>
             {error && (
-              <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+              <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg animate-shake">
                 {error}
               </div>
             )}
@@ -82,111 +94,68 @@ export default function Home() {
 
         {/* Results */}
         {results && (
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              {/* Performance Score */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Performance
-                </h3>
-                <div className="text-5xl font-bold text-blue-600">
-                  {results.performance?.toFixed(0) || 0}
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  / 100
-                </p>
-              </div>
-
-              {/* SEO Score */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  SEO
-                </h3>
-                <div className="text-5xl font-bold text-green-600">
-                  {results.seo?.toFixed(0) || 0}
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  / 100
-                </p>
-              </div>
-
-              {/* Accessibility Score */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Accessibility
-                </h3>
-                <div className="text-5xl font-bold text-purple-600">
-                  {results.accessibility?.toFixed(0) || 0}
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  / 100
-                </p>
-              </div>
-
-              {/* Best Practices Score */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Best Practices
-                </h3>
-                <div className="text-5xl font-bold text-orange-600">
-                  {results.bestPractices?.toFixed(0) || 0}
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  / 100
-                </p>
-              </div>
+              <ScoreCard
+                title="Performance"
+                score={results.performance || 0}
+                color="blue"
+                icon="⚡"
+              />
+              <ScoreCard
+                title="SEO"
+                score={results.seo || 0}
+                color="green"
+                icon="🔍"
+              />
+              <ScoreCard
+                title="Accessibility"
+                score={results.accessibility || 0}
+                color="purple"
+                icon="♿"
+              />
+              <ScoreCard
+                title="Best Practices"
+                score={results.bestPractices || 0}
+                color="orange"
+                icon="✨"
+              />
             </div>
 
             {/* Core Web Vitals */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Core Web Vitals
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                    LCP
-                  </h4>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {results.metrics?.LCP?.toFixed(0) || 0}s
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Largest Contentful Paint
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                    FID
-                  </h4>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {results.metrics?.FID?.toFixed(0) || 0}ms
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    First Input Delay
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                    CLS
-                  </h4>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {results.metrics?.CLS?.toFixed(3) || 0}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Cumulative Layout Shift
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">
-                    TBT
-                  </h4>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {results.metrics?.TBT?.toFixed(0) || 0}ms
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Total Blocking Time
-                  </p>
-                </div>
+                <MetricCard
+                  label="LCP"
+                  value={results.metrics?.LCP || 0}
+                  unit="s"
+                  description="Largest Contentful Paint"
+                  icon="🖼️"
+                />
+                <MetricCard
+                  label="FID"
+                  value={results.metrics?.FID || 0}
+                  unit="ms"
+                  description="First Input Delay"
+                  icon="⚡"
+                />
+                <MetricCard
+                  label="CLS"
+                  value={results.metrics?.CLS || 0}
+                  unit=""
+                  description="Cumulative Layout Shift"
+                  icon="📊"
+                />
+                <MetricCard
+                  label="TBT"
+                  value={results.metrics?.TBT || 0}
+                  unit="ms"
+                  description="Total Blocking Time"
+                  icon="⏱️"
+                />
               </div>
             </div>
           </div>
