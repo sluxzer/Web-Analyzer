@@ -26,22 +26,25 @@ export async function POST(request: NextRequest) {
 
     // Run Lighthouse analysis
     const lighthouse = require('lighthouse')
-    const chromeLauncher = require('chrome-launcher')
+    const puppeteer = require('puppeteer')
 
-    const chrome = await chromeLauncher.launch({
-      chromeFlags: ['--headless', '--disable-gpu', '--no-sandbox'],
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
+
+    const page = await browser.newPage()
 
     const options = {
       logLevel: 'info',
       output: 'json',
       onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
-      port: chrome.port,
+      port: new URL(browser.wsEndpoint()).port,
     }
 
     const runnerResult = await lighthouse(url, options)
 
-    await chrome.kill()
+    await browser.close()
 
     const result = runnerResult.lhr
 
